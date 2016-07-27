@@ -57,7 +57,7 @@ public class CustomView extends View {
         touchx[0] = 200.f;
         touchy[0] = 200.f;
 
-        square = new Rect(-100, -100, 100, 100);
+        square = new Rect(0, 0, 45, 45);
 
         touch = false;
     }
@@ -66,7 +66,16 @@ public class CustomView extends View {
     public void onDraw(Canvas canvas) {
     // call the superclass method
         super.onDraw(canvas);
-        for(int i = 0; i < 16; i++) {
+
+        for (float i = 0.f; i < 8.f; i++) {
+            for (float j = 0.f; j < 8.f; j++) {
+                canvas.save();
+                canvas.translate(i * 50.f, j * 50.f);
+                canvas.drawRect(square, blue);
+                canvas.restore();
+            }
+        }
+        /*for(int i = 0; i < 16; i++) {
             if(touches[i]) {
                 canvas.save();
                 canvas.translate(touchx[i], touchy[i]);
@@ -83,7 +92,7 @@ public class CustomView extends View {
             canvas.translate(touchx[first], touchy[first]);
             canvas.drawRect(square, blue);
             canvas.restore();
-        }
+        }*/
     }
     // public method that needs to be overridden to handle the touches from a
     // user
