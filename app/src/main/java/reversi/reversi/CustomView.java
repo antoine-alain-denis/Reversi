@@ -22,6 +22,10 @@ public class CustomView extends View {
     private float touchy[]; // y position of each touch
     private int first; // the first touch to be rendered
     private boolean touch; // do we have at least on touch
+    private int x;
+    private int y;
+    private int old_x = 0;
+    private int old_y = 0;
 
     // default constructor for the class that takes in a context
     public CustomView(Context c) {
@@ -69,8 +73,11 @@ public class CustomView extends View {
 
         for (float i = 0.f; i < 8.f; i++) {
             for (float j = 0.f; j < 8.f; j++) {
+                int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
+                int intervalBetweenRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
+                square = new Rect(0,0,currentLenghtRectangle,currentLenghtRectangle );
                 canvas.save();
-                canvas.translate(i * 50.f, j * 50.f);
+                canvas.translate((currentLenghtRectangle + 5) * i, (currentLenghtRectangle + 5) * j);
                 canvas.drawRect(square, blue);
                 canvas.restore();
             }
@@ -165,5 +172,17 @@ public class CustomView extends View {
         // if we get to this point they we have not handled the touch
         // ask the system to handle it instead
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld)
+    {
+        x = xNew;
+        y = yNew;
+        old_x = xOld;
+        old_y = yOld;
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + x);
+        System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb " + y);
+
     }
 }
