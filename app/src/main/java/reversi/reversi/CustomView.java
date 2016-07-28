@@ -41,6 +41,8 @@ public class CustomView extends View {
     private int Remaingspots;
     private int CurrentBlackPieces;
     private int CurrentWhitePieces;
+    private int CurrentTotalPieces;
+    private  boolean NoOneCanPlay;
     private boolean hasplayed;
 
     // default constructor for the class that takes in a context
@@ -103,11 +105,29 @@ public class CustomView extends View {
 
         hasplayed = false;
 
+        CurrentTotalPieces = 4;
 
     }
 
+
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        if (y > x) {
+            canvas.drawText("Black : " + CurrentBlackPieces, 10, y - 30, paint_black);
+            canvas.drawText("White : " + CurrentWhitePieces, (float) 2/3 *  x  + 10, y - 30, paint_black);
+            if (white_turn)
+                canvas.drawText("Turn : White", (float) 1/3 * x + 10, y - 30, blue);
+            else
+                canvas.drawText("Turn : Black", (float) 1/3 * x + 10, y - 30, blue);
+        } else {
+            canvas.drawText("Black : " + CurrentBlackPieces, (float) 2/3 * x + 10, 10, paint_black);
+            canvas.drawText("White : " + CurrentWhitePieces, (float) 2/3 * x + 10, 30, paint_black);
+            if (white_turn)
+                canvas.drawText("Turn : White", (float) 2/3 * x + 10 + 10, 50, blue);
+            else
+                canvas.drawText("Turn : Black", (float) 2/3 * x + 10 + 10, 50, blue);
+        }
 
         int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
 
@@ -474,15 +494,18 @@ public class CustomView extends View {
                 CurrentWhitePieces++;
             }
         }
+        CurrentTotalPieces = CurrentBlackPieces + CurrentWhitePieces;
         System.out.println("black " + CurrentBlackPieces + ", " + "white :" + CurrentWhitePieces + " , size : " + list_to_convert.size());
 
     }
 
-    public void CanPlayerPlay(boolean white_turn) {
-
+    public boolean CanPlayerPlay(boolean white_turn) {
+        return true;
     }
 
     public boolean isGameOver() {
+        if (CurrentTotalPieces == 36 || CurrentWhitePieces == 0 || CurrentBlackPieces == 0)
+            return true;
         return true;
     }
 }
