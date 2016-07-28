@@ -353,10 +353,123 @@ public class CustomView extends View {
         list_to_convert_temp.clear();
 
 
-        // case UPLEFT
         // case UPRIGHT
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i =  1; i < 8; i++) {
+                if (touchedRectangle_X + i < 8 && touchedRectangle_Y + i >=0 && touchedRectangle_Y + i < 8 && touchedRectangle_X + i >=0) {
+                    if (Grid[touchedRectangle_X + i][touchedRectangle_Y + i] == "")
+                        break;
+                    if (Grid[touchedRectangle_X + i][touchedRectangle_Y + i] != color) {
+                        Coordinates coord = new Coordinates(touchedRectangle_X + i, touchedRectangle_Y + i);
+                        list_to_convert_temp.add(coord);
+                        atleastoneprey = true;
+                    }
+                    if (Grid[touchedRectangle_X + i][touchedRectangle_Y + i] == color) {
+                        convertColor = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("eeeeeeeeeeeeeeeeeeeeeee");
+        }
+
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+        // case UPLEFT
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i =  1; i < 8; i++) {
+                if (touchedRectangle_X - i < 8 && touchedRectangle_Y + i >=0 && touchedRectangle_Y + i < 8 && touchedRectangle_X - i >=0) {
+                    if (Grid[touchedRectangle_X - i][touchedRectangle_Y + i] == "")
+                        break;
+                    if (Grid[touchedRectangle_X - i][touchedRectangle_Y + i] != color) {
+                        Coordinates coord = new Coordinates(touchedRectangle_X - i, touchedRectangle_Y + i);
+                        list_to_convert_temp.add(coord);
+                        atleastoneprey = true;
+                    }
+                    if (Grid[touchedRectangle_X - i][touchedRectangle_Y + i] == color) {
+                        convertColor = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("eeeeeeeeeeeeeeeeeeeeeee");
+        }
+
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+
         // case DOWNLEFT
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i =  1; i < 8; i++) {
+                if (touchedRectangle_X - i < 8 && touchedRectangle_Y - i >=0 && touchedRectangle_Y - i < 8 && touchedRectangle_X - i >=0) {
+                    if (Grid[touchedRectangle_X - i][touchedRectangle_Y - i] == "")
+                        break;
+                    if (Grid[touchedRectangle_X - i][touchedRectangle_Y - i] != color) {
+                        Coordinates coord = new Coordinates(touchedRectangle_X - i, touchedRectangle_Y - i);
+                        list_to_convert_temp.add(coord);
+                        atleastoneprey = true;
+                    }
+                    if (Grid[touchedRectangle_X - i][touchedRectangle_Y - i] == color) {
+                        convertColor = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("fffffffffffffffffffffffffffff");
+        }
+
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+
         // case DOWNRIGHT
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i =  1; i < 8; i++) {
+                if (touchedRectangle_X + i < 8 && touchedRectangle_Y - i >=0 && touchedRectangle_Y - i < 8 && touchedRectangle_X + i >=0) {
+                    if (Grid[touchedRectangle_X + i][touchedRectangle_Y - i] == "")
+                        break;
+                    if (Grid[touchedRectangle_X + i][touchedRectangle_Y - i] != color) {
+                        Coordinates coord = new Coordinates(touchedRectangle_X + i, touchedRectangle_Y - i);
+                        list_to_convert_temp.add(coord);
+                        atleastoneprey = true;
+                    }
+                    if (Grid[touchedRectangle_X + i][touchedRectangle_Y - i] == color) {
+                        convertColor = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("fffffffffffffffffffffffffffff");
+        }
+
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
 
         ConvertAll(list_to_convert,  color);
 
