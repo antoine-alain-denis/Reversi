@@ -172,14 +172,19 @@ public class CustomView extends View {
             touch = true;
             first = pointer_id;*/
             int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
-            int touchedRectangle_X = ((int) event.getX() - ( (int) event.getX() % currentLenghtRectangle)) / currentLenghtRectangle;
-            int touchedRectangle_Y = ((int) event.getY() - ( (int) event.getY() % currentLenghtRectangle)) / currentLenghtRectangle;
-            System.out.println("xxxxxxxxxxxxxxxxxxxxxx " + touchedRectangle_X + " " + touchedRectangle_Y);
-            if (white_turn)
-                Grid[touchedRectangle_X][touchedRectangle_Y] = "white";
-            else
-                Grid[touchedRectangle_X][touchedRectangle_Y] = "black";
-            white_turn = !white_turn;
+            int touchedRectangle_X = ((int) event.getX() - ( (int) event.getX() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
+            int touchedRectangle_Y = ((int) event.getY() - ( (int) event.getY() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
+            //System.out.println("xxxxxxxxxxxxxxxxxxxxxx " + touchedRectangle_X + " " + touchedRectangle_Y + " " + event.getX() + " " + event.getY() + " " + currentLenghtRectangle);
+
+            if (touchedRectangle_X >= 0 && touchedRectangle_X < 8 && touchedRectangle_Y >=0 && touchedRectangle_Y < 8) {
+                if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+                    if (white_turn)
+                        Grid[touchedRectangle_X][touchedRectangle_Y] = "white";
+                    else
+                        Grid[touchedRectangle_X][touchedRectangle_Y] = "black";
+                    white_turn = !white_turn;
+                }
+            }
 
             invalidate();
             return true;
