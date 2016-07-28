@@ -25,45 +25,37 @@ public class CustomView extends View {
 
     private Paint red, green, blue;
     private Rect square; // the square itself
-    private boolean touches[]; // which fingers providing input
-    private float touchx[]; // x position of each touch
-    private float touchy[]; // y position of each touch
     private int first; // the first touch to be rendered
-    private boolean touch; // do we have at least on touch
     private int x;
     private int y;
-    private int old_x = 0;
-    private int old_y = 0;
     private String Grid[][];
     private Paint paint_black;
     private Paint paint_white;
     private boolean white_turn;
-    private int Remaingspots;
     private int CurrentBlackPieces;
     private int CurrentWhitePieces;
     private int CurrentTotalPieces;
-    private  boolean NoOneCanPlay;
     private boolean hasplayed;
+    private boolean gameover;
 
-    // default constructor for the class that takes in a context
     public CustomView(Context c) {
         super(c);
         init();
     }
-    // constructor that takes in a context and also a list of attributes
-    // that were set through XML
+
+
     public CustomView(Context c, AttributeSet as) {
         super(c, as);
         init();
     }
-    // constructor that take in a context, attribute set and also a default
-    // style in case the view is to be styled in a certian way
+
+
     public CustomView(Context c, AttributeSet as, int default_style) {
         super(c, as, default_style);
         init();
     }
-    // refactored init method as most of this code is shared by all the
-    // constructors
+
+
     private void init() {
 
         paint_black = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -73,17 +65,7 @@ public class CustomView extends View {
         paint_white.setColor(0xFFFFFFFF);
         blue.setColor(0xFF00B8FF);
 
-        touches = new boolean[16];
-        touchx = new float[16];
-        touchy = new float[16];
-
-        touchx[0] = 200.f;
-        touchy[0] = 200.f;
-
         square = new Rect(0, 0, 45, 45);
-
-        touch = false;
-
 
         Grid = new String[8][8];
         for (int i = 0; i < 8; i++) {
@@ -97,15 +79,12 @@ public class CustomView extends View {
         Grid[4][4] = "white";
 
         white_turn = true;
-
-        Remaingspots = 32;
-
         CurrentWhitePieces = 2;
         CurrentBlackPieces = 2;
-
         hasplayed = false;
-
         CurrentTotalPieces = 4;
+        //NoOneCanPlay = false;
+        gameover = false;
 
     }
 
@@ -115,18 +94,44 @@ public class CustomView extends View {
 
         if (y > x) {
             canvas.drawText("Black : " + CurrentBlackPieces, 10, y - 30, paint_black);
-            canvas.drawText("White : " + CurrentWhitePieces, (float) 2/3 *  x  + 10, y - 30, paint_black);
-            if (white_turn)
-                canvas.drawText("Turn : White", (float) 1/3 * x + 10, y - 30, blue);
-            else
-                canvas.drawText("Turn : Black", (float) 1/3 * x + 10, y - 30, blue);
-        } else {
+            canvas.drawText("White : " + CurrentWhitePieces, (float) 2 / 3 * x + 10, y - 30, paint_black);
+            if (gameover) {
+                if (CurrentBlackPieces > CurrentWhitePieces)
+                    canvas.drawText("Winner : Black", (float) 1 / 3 * x + 10, y - 30, blue);
+
+                if (CurrentBlackPieces < CurrentWhitePieces)
+                    canvas.drawText("Winner : White", (float) 1 / 3 * x + 10, y - 30, blue);
+
+                if (CurrentBlackPieces > CurrentWhitePieces)
+                    canvas.drawText("No Winner", (float) 1 / 3 * x + 10, y - 30, blue);
+
+            } else {
+                if (white_turn)
+                    canvas.drawText("Turn : White", (float) 1 / 3 * x + 10, y - 30, blue);
+                else
+                    canvas.drawText("Turn : Black", (float) 1 / 3 * x + 10, y - 30, blue);
+            }
+        }
+         else {
             canvas.drawText("Black : " + CurrentBlackPieces, (float) 2/3 * x + 10, 10, paint_black);
             canvas.drawText("White : " + CurrentWhitePieces, (float) 2/3 * x + 10, 30, paint_black);
-            if (white_turn)
-                canvas.drawText("Turn : White", (float) 2/3 * x + 10 + 10, 50, blue);
-            else
-                canvas.drawText("Turn : Black", (float) 2/3 * x + 10 + 10, 50, blue);
+
+            if (gameover) {
+                if (CurrentBlackPieces > CurrentWhitePieces)
+                    canvas.drawText("Winner : Black", (float) 1/3 * x + 10, y - 30, blue);
+
+                if (CurrentBlackPieces < CurrentWhitePieces)
+                    canvas.drawText("Winner : White", (float) 1/3 * x + 10, y - 30, blue);
+
+                if (CurrentBlackPieces > CurrentWhitePieces)
+                    canvas.drawText("No Winner", (float) 1/3 * x + 10, y - 30, blue);
+
+                } else {
+                if (white_turn)
+                    canvas.drawText("Turn : White", (float) 2 / 3 * x + 10 + 10, 50, blue);
+                else
+                    canvas.drawText("Turn : Black", (float) 2 / 3 * x + 10 + 10, 50, blue);
+            }
         }
 
         int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
@@ -162,24 +167,41 @@ public class CustomView extends View {
 
     public boolean onTouchEvent(MotionEvent event) {
 
+
         if(event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            System.out.println("wxwxwwwwwwwwwwwwwwwwwwww " + white_turn);
-            int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
-            int touchedRectangle_X = ((int) event.getX() - ( (int) event.getX() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
-            int touchedRectangle_Y = ((int) event.getY() - ( (int) event.getY() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
 
-            if (hasplayed) {
-                white_turn = !white_turn;
-                hasplayed = false;
-            }
+            if (!gameover) {
+                System.out.println("wxwxwwwwwwwwwwwwwwwwwwww " + white_turn);
+                int currentLenghtRectangle = x < y ? (x - 9 * 5) / 8 : (y - 9 * 5) / 8;
+                int touchedRectangle_X = ((int) event.getX() - ((int) event.getX() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) / 2) / (currentLenghtRectangle + 5);
+                int touchedRectangle_Y = ((int) event.getY() - ((int) event.getY() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) / 2) / (currentLenghtRectangle + 5);
 
-            if (touchedRectangle_X >= 0 && touchedRectangle_X < 8 && touchedRectangle_Y >=0 && touchedRectangle_Y < 8) {
-                if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
-                    if (white_turn)
-                        isMoveValid(touchedRectangle_X, touchedRectangle_Y, "white");
-                    else
-                        isMoveValid(touchedRectangle_X, touchedRectangle_Y, "black");
+
+                if (touchedRectangle_X >= 0 && touchedRectangle_X < 8 && touchedRectangle_Y >= 0 && touchedRectangle_Y < 8) {
+                    if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+                        if (white_turn)
+                            isMoveValid(touchedRectangle_X, touchedRectangle_Y, "white");
+                        else
+                            isMoveValid(touchedRectangle_X, touchedRectangle_Y, "black");
+                    }
                 }
+
+                if (hasplayed) {
+                    white_turn = !white_turn;
+                    hasplayed = false;
+                }
+            /*TurnSimulator t = new TurnSimulator(Grid);
+            System.out.println("QQQQQQQQQQQQQQQQQQQQQQQQQQQQ "+  t.CanColorPlay("white") + " " + t.CanColorPlay("white"));
+            if (!t.CanColorPlay("white") && !t.CanColorPlay("black"));
+                NoOneCanPlay = true;
+            if ((!white_turn && !t.CanColorPlay("white")) || (white_turn && !t.CanColorPlay("black"))) {
+                hasplayed = false;
+                white_turn = !white_turn;
+            }*/
+
+
+                if(isGameOver())
+                    gameover = true;
             }
             invalidate();
             return true;
@@ -201,8 +223,6 @@ public class CustomView extends View {
     {
         x = xNew;
         y = yNew;
-        old_x = xOld;
-        old_y = yOld;
 
     }
 
@@ -504,8 +524,9 @@ public class CustomView extends View {
     }
 
     public boolean isGameOver() {
-        if (CurrentTotalPieces == 36 || CurrentWhitePieces == 0 || CurrentBlackPieces == 0)
+        if (CurrentTotalPieces == 64 || CurrentWhitePieces == 0 || CurrentBlackPieces == 0)
             return true;
-        return true;
+        else
+            return false;
     }
 }
