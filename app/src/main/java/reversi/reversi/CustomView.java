@@ -6,12 +6,16 @@ package reversi.reversi;
 // imports
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.ArrayList;
+
 // class definition
 public class CustomView extends View {
 
@@ -26,6 +30,10 @@ public class CustomView extends View {
     private int y;
     private int old_x = 0;
     private int old_y = 0;
+    private String Grid[][];
+    private Paint paint_black;
+    private Paint paint_white;
+
 
     // default constructor for the class that takes in a context
     public CustomView(Context c) {
@@ -47,12 +55,12 @@ public class CustomView extends View {
     // refactored init method as most of this code is shared by all the
     // constructors
     private void init() {
-        red = new Paint(Paint.ANTI_ALIAS_FLAG);
-        green = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint_black = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint_white = new Paint(Paint.ANTI_ALIAS_FLAG);
         blue = new Paint(Paint.ANTI_ALIAS_FLAG);
-        red.setColor(0xFFFF0000);
-        green.setColor(0xFF00FF00);
-        blue.setColor(0xFF0000FF);
+        paint_black.setColor(0xFF000000);
+        paint_white.setColor(0xFFFFFFFF);
+        blue.setColor(0xFF00B8FF);
 
         touches = new boolean[16];
         touchx = new float[16];
@@ -64,6 +72,28 @@ public class CustomView extends View {
         square = new Rect(0, 0, 45, 45);
 
         touch = false;
+
+
+        Grid = new String[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++ ){
+                Grid[i][j] = "";
+            }
+        }
+        Grid[4][3] = "black";
+        Grid[3][4] = "black";
+        Grid[3][3] = "white";
+        Grid[4][4] = "white";
+
+        /*paint_white = new Paint();
+        paint_white.setColor(Color.WHITE);
+        paint_white.setStrokeWidth(10);
+        paint_white.setStyle(Paint.Style.STROKE);
+
+        paint_black = new Paint();
+        paint_black.setColor(Color.BLACK);
+        paint_black.setStrokeWidth(10);
+        paint_black.setStyle(Paint.Style.STROKE);*/
     }
     // public method that needs to be overridden to draw the contents of this
     // widget
@@ -71,17 +101,37 @@ public class CustomView extends View {
     // call the superclass method
         super.onDraw(canvas);
 
+        int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
+        int intervalBetweenRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
+
         for (float i = 0.f; i < 8.f; i++) {
             for (float j = 0.f; j < 8.f; j++) {
-                int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
-                int intervalBetweenRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
                 square = new Rect(0,0,currentLenghtRectangle,currentLenghtRectangle );
                 canvas.save();
-                canvas.translate((currentLenghtRectangle + 5) * i, (currentLenghtRectangle + 5) * j);
+                canvas.translate((currentLenghtRectangle + 5) * i + 5, (currentLenghtRectangle + 5) * j + 5);
                 canvas.drawRect(square, blue);
                 canvas.restore();
             }
         }
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (Grid[i][j] == "black") {
+                    canvas.save();
+                    //canvas.translate((currentLenghtRectangle + 5) * i + 5, (currentLenghtRectangle + 5) * j + 5);
+                    canvas.drawCircle(5 + (currentLenghtRectangle +5) * i + currentLenghtRectangle /2, 5 + (currentLenghtRectangle +5) * j + currentLenghtRectangle /2, currentLenghtRectangle /2 , paint_black);
+                    canvas.restore();
+                }
+                if (Grid [i][j] == "white") {
+                    canvas.save();
+                    //canvas.translate((currentLenghtRectangle + 5) * i + 5, (currentLenghtRectangle + 5) * j + 5);
+                    canvas.drawCircle(5 + (currentLenghtRectangle +5) * i + currentLenghtRectangle /2, 5 + (currentLenghtRectangle +5) * j + currentLenghtRectangle /2, currentLenghtRectangle /2 , paint_white);
+                    canvas.restore();
+
+                }
+            }
+        }
+        //canvas.drawCircle(x, y, radius, paint);
         /*for(int i = 0; i < 16; i++) {
             if(touches[i]) {
                 canvas.save();
