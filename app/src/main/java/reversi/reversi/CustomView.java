@@ -13,8 +13,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import reversi.reversi.Coordinates;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 // class definition
 public class CustomView extends View {
@@ -34,6 +36,10 @@ public class CustomView extends View {
     private Paint paint_black;
     private Paint paint_white;
     private boolean white_turn;
+    private int Remaingspots;
+    private int CurrentBlackPieces;
+    private int CurrentWhitePieces;
+    private boolean hasplayed;
 
 
     // default constructor for the class that takes in a context
@@ -88,15 +94,11 @@ public class CustomView extends View {
 
         white_turn = true;
 
-        /*paint_white = new Paint();
-        paint_white.setColor(Color.WHITE);
-        paint_white.setStrokeWidth(10);
-        paint_white.setStyle(Paint.Style.STROKE);
+        Remaingspots = 32;
 
-        paint_black = new Paint();
-        paint_black.setColor(Color.BLACK);
-        paint_black.setStrokeWidth(10);
-        paint_black.setStyle(Paint.Style.STROKE);*/
+        CurrentWhitePieces = 2;
+        CurrentBlackPieces = 2;
+
     }
     // public method that needs to be overridden to draw the contents of this
     // widget
@@ -160,57 +162,29 @@ public class CustomView extends View {
 
 
         if(event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            // this indicates that the user has placed the first finger on the
-            // screen what we will do here is enable the pointer, track its location
-            // and indicate that the user is touching the screen right now
-            // we also take a copy of the pointer id as the initial pointer for this
-            // touch
-            /*int pointer_id = event.getPointerId(event.getActionIndex());
-            touches[pointer_id] = true;
-            touchx[pointer_id] = event.getX();
-            touchy[pointer_id] = event.getY();
-            touch = true;
-            first = pointer_id;*/
             int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
             int touchedRectangle_X = ((int) event.getX() - ( (int) event.getX() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
             int touchedRectangle_Y = ((int) event.getY() - ( (int) event.getY() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
             //System.out.println("xxxxxxxxxxxxxxxxxxxxxx " + touchedRectangle_X + " " + touchedRectangle_Y + " " + event.getX() + " " + event.getY() + " " + currentLenghtRectangle);
 
+
             if (touchedRectangle_X >= 0 && touchedRectangle_X < 8 && touchedRectangle_Y >=0 && touchedRectangle_Y < 8) {
                 if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
                     if (white_turn)
-                        Grid[touchedRectangle_X][touchedRectangle_Y] = "white";
+                        //Grid[touchedRectangle_X][touchedRectangle_Y] = "white";
+                        isMoveValid(touchedRectangle_X, touchedRectangle_Y, "white");
                     else
-                        Grid[touchedRectangle_X][touchedRectangle_Y] = "black";
+                        //Grid[touchedRectangle_X][touchedRectangle_Y] = "black";
+                        isMoveValid(touchedRectangle_X, touchedRectangle_Y, "black");
                     white_turn = !white_turn;
                 }
             }
-
             invalidate();
             return true;
         } else if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-            // this indicates that the user has removed the last finger from the
-            // screen and has ended all touch events. here we just disable the
-            // last touch.
-            int pointer_id = event.getPointerId(event.getActionIndex());
-            touches[pointer_id] = false;
-            first = pointer_id;
-            touch = false;
-            invalidate();
-            return true;
+
         } else if(event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-            // indicates that one or more pointers has been moved. Android for
-            // efficiency will batch multiple move events into one. thus you
-            // have to check to see if all pointers have been moved.
-            for (int i = 0; i < 16; i++) {
-                int pointer_index = event.findPointerIndex(i);
-                if (pointer_index != -1) {
-                    touchx[i] = event.getX(pointer_index);
-                    touchy[i] = event.getY(pointer_index);
-                }
-            }
-            invalidate();
-            return true;
+
         } else if(event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
             // indicates that a new pointer has been added to the list
             // here we enable the new pointer and keep track of its position
@@ -251,6 +225,145 @@ public class CustomView extends View {
         old_y = yOld;
         //System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + x);
         //System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb " + y);
+
+    }
+
+    public boolean isMoveValid(int touchedRectangle_X, int touchedRectangle_Y, String color) {
+
+
+        boolean convertColor = false;
+        boolean atleastoneprey = false;
+        ArrayList<Coordinates> list_to_convert = new ArrayList<>(36);
+        ArrayList<Coordinates> list_to_convert_temp = new ArrayList<>(36);
+
+        // case RIGHT
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i = touchedRectangle_X + 1; i < 8; i++) {
+                if (Grid[i][touchedRectangle_Y] == "")
+                    break;
+                if (Grid[i][touchedRectangle_Y] != color) {
+                    Coordinates coord = new Coordinates(i, touchedRectangle_Y);
+                    list_to_convert_temp.add(coord);
+                    atleastoneprey = true;
+                }
+                if (Grid[i][touchedRectangle_Y] == color) {
+                    convertColor = true;
+                    break;
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("aaaaaaaaaaaaaaaaaaaaaa");
+        }
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+        // case LEFT
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i = touchedRectangle_X - 1; i >= 0; i--) {
+                if (Grid[i][touchedRectangle_Y] == "")
+                    break;
+                if (Grid[i][touchedRectangle_Y] != color) {
+                    Coordinates coord = new Coordinates(i, touchedRectangle_Y);
+                    list_to_convert_temp.add(coord);
+                    atleastoneprey = true;
+                }
+                if (Grid[i][touchedRectangle_Y] == color) {
+                    convertColor = true;
+                    break;
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbb");
+
+        }
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+
+        // case UP
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i = touchedRectangle_Y + 1; i < 8; i++) {
+                if (Grid[touchedRectangle_X][i] == "")
+                    break;
+                if (Grid[touchedRectangle_X][i] != color) {
+                    Coordinates coord = new Coordinates(touchedRectangle_X, i);
+                    list_to_convert_temp.add(coord);
+                    atleastoneprey = true;
+                }
+                if (Grid[touchedRectangle_X][i] == color) {
+                    convertColor = true;
+                    break;
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("cccccccccccccccccccccccccc");
+
+        }
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+
+        // case Down
+        if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
+            Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
+            list_to_convert_temp.add(coor);
+            for (int i = touchedRectangle_Y - 1; i >= 8; i--) {
+                if (Grid[touchedRectangle_X][i] == "")
+                    break;
+                if (Grid[touchedRectangle_X][i] != color) {
+                    Coordinates coord = new Coordinates(touchedRectangle_X, i);
+                    list_to_convert_temp.add(coord);
+                    atleastoneprey = true;
+                }
+                if (Grid[touchedRectangle_X][i] == color) {
+                    convertColor = true;
+                    break;
+                }
+            }
+        }
+        if (convertColor && atleastoneprey) {
+            list_to_convert.addAll(list_to_convert_temp);
+            System.out.println("dddddddddddddddddddddddddd");
+
+        }
+        convertColor = false;
+        atleastoneprey = false;
+        list_to_convert_temp.clear();
+
+
+        // case UPLEFT
+        // case UPRIGHT
+        // case DOWNLEFT
+        // case DOWNRIGHT
+
+        ConvertAll(list_to_convert,  color);
+
+        return true;
+    }
+
+    public void ConvertAll(ArrayList<Coordinates> list_to_convert, String color) {
+
+        for (Coordinates corr : list_to_convert) {
+            Grid[corr.getX()][corr.getY()] = color;
+        }
+    }
+
+    public void CanPlayerPlay(boolean white_turn) {
 
     }
 }
