@@ -33,6 +33,7 @@ public class CustomView extends View {
     private String Grid[][];
     private Paint paint_black;
     private Paint paint_white;
+    private boolean white_turn;
 
 
     // default constructor for the class that takes in a context
@@ -84,6 +85,8 @@ public class CustomView extends View {
         Grid[3][4] = "black";
         Grid[3][3] = "white";
         Grid[4][4] = "white";
+
+        white_turn = true;
 
         /*paint_white = new Paint();
         paint_white.setColor(Color.WHITE);
@@ -162,12 +165,22 @@ public class CustomView extends View {
             // and indicate that the user is touching the screen right now
             // we also take a copy of the pointer id as the initial pointer for this
             // touch
-            int pointer_id = event.getPointerId(event.getActionIndex());
+            /*int pointer_id = event.getPointerId(event.getActionIndex());
             touches[pointer_id] = true;
             touchx[pointer_id] = event.getX();
             touchy[pointer_id] = event.getY();
             touch = true;
-            first = pointer_id;
+            first = pointer_id;*/
+            int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
+            int touchedRectangle_X = ((int) event.getX() - ( (int) event.getX() % currentLenghtRectangle)) / currentLenghtRectangle;
+            int touchedRectangle_Y = ((int) event.getY() - ( (int) event.getY() % currentLenghtRectangle)) / currentLenghtRectangle;
+            System.out.println("xxxxxxxxxxxxxxxxxxxxxx " + touchedRectangle_X + " " + touchedRectangle_Y);
+            if (white_turn)
+                Grid[touchedRectangle_X][touchedRectangle_Y] = "white";
+            else
+                Grid[touchedRectangle_X][touchedRectangle_Y] = "black";
+            white_turn = !white_turn;
+
             invalidate();
             return true;
         } else if(event.getActionMasked() == MotionEvent.ACTION_UP) {
@@ -231,8 +244,8 @@ public class CustomView extends View {
         y = yNew;
         old_x = xOld;
         old_y = yOld;
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + x);
-        System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb " + y);
+        //System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + x);
+        //System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb " + y);
 
     }
 }
