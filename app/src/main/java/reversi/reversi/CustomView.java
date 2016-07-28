@@ -99,6 +99,8 @@ public class CustomView extends View {
         CurrentWhitePieces = 2;
         CurrentBlackPieces = 2;
 
+        hasplayed = false;
+
     }
     // public method that needs to be overridden to draw the contents of this
     // widget
@@ -161,12 +163,18 @@ public class CustomView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
 
+
         if(event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            System.out.println("wxwxwwwwwwwwwwwwwwwwwwww " + white_turn);
             int currentLenghtRectangle = x < y ? (x - 9*5) / 8 : (y - 9*5) / 8;
             int touchedRectangle_X = ((int) event.getX() - ( (int) event.getX() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
             int touchedRectangle_Y = ((int) event.getY() - ( (int) event.getY() % (currentLenghtRectangle + 5)) + (currentLenghtRectangle + 5) /2) / (currentLenghtRectangle + 5);
             //System.out.println("xxxxxxxxxxxxxxxxxxxxxx " + touchedRectangle_X + " " + touchedRectangle_Y + " " + event.getX() + " " + event.getY() + " " + currentLenghtRectangle);
 
+            if (hasplayed) {
+                white_turn = !white_turn;
+                hasplayed = false;
+            }
 
             if (touchedRectangle_X >= 0 && touchedRectangle_X < 8 && touchedRectangle_Y >=0 && touchedRectangle_Y < 8) {
                 if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
@@ -176,7 +184,7 @@ public class CustomView extends View {
                     else
                         //Grid[touchedRectangle_X][touchedRectangle_Y] = "black";
                         isMoveValid(touchedRectangle_X, touchedRectangle_Y, "black");
-                    white_turn = !white_turn;
+                    //white_turn = !white_turn;
                 }
             }
             invalidate();
@@ -188,19 +196,19 @@ public class CustomView extends View {
         } else if(event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
             // indicates that a new pointer has been added to the list
             // here we enable the new pointer and keep track of its position
-            int pointer_id = event.getPointerId(event.getActionIndex());
+            /*int pointer_id = event.getPointerId(event.getActionIndex());
             touches[pointer_id] = true;
             touchx[pointer_id] = event.getX(pointer_id);
             touchy[pointer_id] = event.getY(pointer_id);
             invalidate();
-            return true;
+            return true;*/
         } else if(event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
                 // indicates that a pointer has been removed from the list
                 // note that is is possible for us to lose our initial pointer
                 // in order to maintain some semblance of an active pointer
                 // (this may be needed depending on the application) we set
                 // the earliest pointer to be the new first pointer.
-            int pointer_id = event.getPointerId(event.getActionIndex());
+            /*int pointer_id = event.getPointerId(event.getActionIndex());
             touches[pointer_id] = false;
             if(pointer_id == first) {
                 for(int i = 0; i < 16; i++)
@@ -209,7 +217,7 @@ public class CustomView extends View {
                         break;
                     }
             } invalidate();
-            return true;
+            return true;*/
         }
         // if we get to this point they we have not handled the touch
         // ask the system to handle it instead
@@ -229,7 +237,6 @@ public class CustomView extends View {
     }
 
     public boolean isMoveValid(int touchedRectangle_X, int touchedRectangle_Y, String color) {
-
 
         boolean convertColor = false;
         boolean atleastoneprey = false;
@@ -322,7 +329,7 @@ public class CustomView extends View {
         if (Grid[touchedRectangle_X][touchedRectangle_Y] == "") {
             Coordinates coor = new Coordinates(touchedRectangle_X, touchedRectangle_Y);
             list_to_convert_temp.add(coor);
-            for (int i = touchedRectangle_Y - 1; i >= 8; i--) {
+            for (int i = touchedRectangle_Y - 1; i >= 0; i--) {
                 if (Grid[touchedRectangle_X][i] == "")
                     break;
                 if (Grid[touchedRectangle_X][i] != color) {
@@ -358,9 +365,14 @@ public class CustomView extends View {
 
     public void ConvertAll(ArrayList<Coordinates> list_to_convert, String color) {
 
+        if (list_to_convert.size() > 0) {
+            hasplayed = true;
+        }
         for (Coordinates corr : list_to_convert) {
             Grid[corr.getX()][corr.getY()] = color;
         }
+        System.out.println("pppppppppppppppppppppppppppp " + list_to_convert.size());
+
     }
 
     public void CanPlayerPlay(boolean white_turn) {
